@@ -42,18 +42,30 @@ const DriftLines = ({ reduced }: { reduced: boolean }) => (
         animate={reduced ? { opacity: 0.2 } : { opacity: [0.15, 0.35, 0.15] }}
         transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
       />
+      <motion.path
+        d="M40 260 C200 180, 380 320, 560 220 C760 110, 980 220, 1160 160"
+        stroke="#f06c5b"
+        strokeWidth="4"
+        initial={{ opacity: 0.15 }}
+        animate={reduced ? { opacity: 0.15 } : { opacity: [0.12, 0.28, 0.12] }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+      />
     </g>
   </svg>
 );
 
 const DriftParticles = ({ reduced }: { reduced: boolean }) => {
   const particles = [
-    { cx: 140, cy: 120, r: 2.5, dur: 12 },
-    { cx: 260, cy: 220, r: 3.5, dur: 16 },
-    { cx: 420, cy: 160, r: 2.8, dur: 14 },
-    { cx: 520, cy: 260, r: 3.2, dur: 18 },
-    { cx: 720, cy: 130, r: 2.4, dur: 15 },
-    { cx: 920, cy: 210, r: 3.6, dur: 17 },
+    { cx: 120, cy: 120, r: 2.5, dur: 12 },
+    { cx: 220, cy: 210, r: 3.5, dur: 16 },
+    { cx: 360, cy: 160, r: 2.8, dur: 14 },
+    { cx: 480, cy: 260, r: 3.2, dur: 18 },
+    { cx: 620, cy: 140, r: 2.4, dur: 15 },
+    { cx: 760, cy: 230, r: 3.1, dur: 17 },
+    { cx: 900, cy: 170, r: 2.6, dur: 13 },
+    { cx: 1040, cy: 260, r: 3.4, dur: 19 },
+    { cx: 980, cy: 90, r: 2.2, dur: 14 },
+    { cx: 540, cy: 90, r: 2.3, dur: 12 },
   ];
 
   return (
@@ -88,8 +100,18 @@ export function Hero() {
             "radial-gradient(circle at 20% 20%, rgba(126,166,201,0.18), transparent 55%) , radial-gradient(circle at 80% 20%, rgba(240,108,91,0.16), transparent 55%), linear-gradient(180deg, rgba(4,6,12,0.2), rgba(2,4,10,0.9))",
         }}
         initial={{ opacity: 0.6 }}
-        animate={reduced ? { opacity: 0.6 } : { opacity: [0.55, 0.8, 0.55], backgroundPosition: ["0% 0%", "100% 40%", "0% 0%"] }}
+        animate={reduced ? { opacity: 0.6 } : { opacity: [0.55, 0.85, 0.55], backgroundPosition: ["0% 0%", "100% 40%", "0% 0%"] }}
         transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 60% 70%, rgba(240,108,91,0.12), transparent 55%) , radial-gradient(circle at 30% 80%, rgba(126,166,201,0.14), transparent 60%)",
+        }}
+        animate={reduced ? { opacity: 0.25 } : { opacity: [0.2, 0.45, 0.2], scale: [1, 1.05, 1] }}
+        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
       />
 
       <motion.div
@@ -120,7 +142,11 @@ export function Hero() {
         <DriftParticles reduced={reduced} />
       </motion.div>
 
-      <div className="relative z-10 px-6 py-12 md:px-10 md:py-14">
+      <motion.div
+        className="relative z-10 px-6 py-12 md:px-10 md:py-14"
+        animate={reduced ? { y: 0 } : { y: [0, -6, 0] }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+      >
         <div className="text-[11px] uppercase tracking-[0.4em] text-white/40">Drift</div>
         <h1 className="mt-4 font-monda text-4xl md:text-[3.4rem] font-semibold tracking-tight text-[#f8fafc] leading-[1.05]">
           DRIFT
@@ -141,7 +167,7 @@ export function Hero() {
           <div>PSI + CrUX</div>
           <div>Baseline ready</div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
