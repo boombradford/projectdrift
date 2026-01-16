@@ -28,3 +28,10 @@ Create `.env.local` with:
 SUPABASE_URL=...
 SUPABASE_SERVICE_ROLE_KEY=...
 ```
+
+## Rive Animation
+Place a Rive file at:
+```
+public/rive/drift.riv
+```
+If it is missing or fails to load, the hero falls back to the SVG animation.

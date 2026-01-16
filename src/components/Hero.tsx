@@ -1,6 +1,8 @@
  "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useRive } from "@rive-app/react-canvas";
+import { useMemo, useState } from "react";
 import clsx from "clsx";
 
 const CTA = ({ label, variant = "primary" }: { label: string; variant?: "primary" | "secondary" }) => (
@@ -90,6 +92,18 @@ const DriftParticles = ({ reduced }: { reduced: boolean }) => {
 
 export function Hero() {
   const reduced = useReducedMotion();
+  const [riveFailed, setRiveFailed] = useState(false);
+
+  const riveConfig = useMemo(
+    () => ({
+      src: "/rive/drift.riv",
+      autoplay: true,
+      onLoadError: () => setRiveFailed(true),
+    }),
+    []
+  );
+
+  const { RiveComponent } = useRive(riveConfig);
 
   return (
     <section className="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-[#060912]">
@@ -124,23 +138,33 @@ export function Hero() {
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      <motion.div
-        className="absolute -inset-10 opacity-40"
-        style={{ willChange: "transform" }}
-        animate={reduced ? { x: 0, y: 0 } : { x: [0, -20, 0], y: [0, 14, 0] }}
-        transition={{ duration: 28, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <DriftLines reduced={reduced} />
-      </motion.div>
+      {!riveFailed && !reduced && (
+        <div className="absolute inset-0 opacity-80">
+          <RiveComponent className="w-full h-full" />
+        </div>
+      )}
 
-      <motion.div
-        className="absolute inset-0 opacity-30"
-        style={{ willChange: "transform" }}
-        animate={reduced ? { x: 0, y: 0 } : { x: [0, 18, 0], y: [0, -10, 0] }}
-        transition={{ duration: 34, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <DriftParticles reduced={reduced} />
-      </motion.div>
+      {(riveFailed || reduced) && (
+        <>
+          <motion.div
+            className="absolute -inset-10 opacity-40"
+            style={{ willChange: "transform" }}
+            animate={reduced ? { x: 0, y: 0 } : { x: [0, -20, 0], y: [0, 14, 0] }}
+            transition={{ duration: 28, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <DriftLines reduced={reduced} />
+          </motion.div>
+
+          <motion.div
+            className="absolute inset-0 opacity-30"
+            style={{ willChange: "transform" }}
+            animate={reduced ? { x: 0, y: 0 } : { x: [0, 18, 0], y: [0, -10, 0] }}
+            transition={{ duration: 34, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <DriftParticles reduced={reduced} />
+          </motion.div>
+        </>
+      )}
 
       <motion.div
         className="relative z-10 px-6 py-12 md:px-10 md:py-14"
