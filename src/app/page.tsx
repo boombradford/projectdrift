@@ -136,7 +136,7 @@ export default function DriftPage() {
                     <span className="text-[14px] font-semibold text-[#f8fafc] tracking-tight">Flux Nine Labs</span>
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="hidden md:block text-[10px] font-mono text-white/40 uppercase tracking-[0.2em]">Drift</div>
+                    <div className="hidden md:block text-[10px] font-mono text-white/40 uppercase tracking-[0.2em]">DRIFT</div>
                     <button
                         type="button"
                         className="px-4 py-2 bg-[#f06c5b] text-white text-[12px] font-semibold rounded-lg hover:bg-[#ff7d6d] transition-colors"
@@ -147,90 +147,122 @@ export default function DriftPage() {
             </header>
 
             <main className="max-w-6xl mx-auto px-6 py-12 space-y-12">
-                <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-                    <div className="space-y-5">
-                        <div className="text-[11px] uppercase tracking-[0.3em] text-white/40">Drift</div>
-                        <h1 className="font-monda text-4xl md:text-[3.25rem] font-semibold tracking-tight text-[#f8fafc] leading-[1.05]">
-                            Drift finds real changes
-                            <span className="block text-[#7ea6c9]">in performance and SEO.</span>
+                <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div className="space-y-6">
+                        <div className="text-[11px] uppercase tracking-[0.3em] text-white/40">DRIFT</div>
+                        <h1 className="font-monda text-4xl md:text-[3.35rem] font-semibold tracking-tight text-[#f8fafc] leading-[1.05]">
+                            Drift is a signal layer
+                            <span className="block text-[#7ea6c9]">for real change.</span>
                         </h1>
                         <p className="text-[16px] text-[#9fb2c7] max-w-xl leading-relaxed">
-                            Project Drift compares your latest scan to the previous one and surfaces evidence-backed deltas across PSI, CrUX, on-page SEO, and CTA clarity.
+                            We capture a clean baseline, then track what shifts in performance, SEO, and conversion clarity. Every delta is evidence-backed.
                         </p>
-                    </div>
-                    <div className="glass-card p-6 border-white/[0.08] bg-white/[0.02] space-y-4">
-                        <div className="flex items-center justify-between">
-                            <div className="text-[10px] uppercase tracking-[0.2em] text-white/40">Drift snapshot</div>
-                            {data && (
+                        <form
+                            onSubmit={(event) => {
+                                event.preventDefault();
+                                runDrift();
+                            }}
+                            className="flex flex-col md:flex-row gap-3"
+                        >
+                            <input
+                                type="text"
+                                value={url}
+                                onChange={(e) => {
+                                    if (error) setError(null);
+                                    setUrl(e.target.value);
+                                }}
+                                placeholder="domain.com"
+                                className="flex-1 px-4 py-3 bg-white/[0.03] border border-white/[0.1] rounded-xl text-white focus:outline-none"
+                                aria-label="Website domain"
+                            />
+                            <button
+                                type="submit"
+                                className="px-6 py-3 bg-[#f06c5b] text-white font-bold text-[12px] tracking-widest uppercase rounded-xl hover:bg-[#ff7d6d] transition-all"
+                            >
+                                Run Drift
+                            </button>
+                        </form>
+                        {error && (
+                            <div className="p-4 border border-red-500/20 bg-red-500/10 rounded-lg flex items-start gap-3">
+                                <AlertTriangle className="w-4 h-4 text-red-400" />
+                                <span className="text-sm text-red-200">{error}</span>
+                            </div>
+                        )}
+                        {data && (
+                            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.2em] text-white/50">
+                                <span>Drift status</span>
                                 <span className={clsx(
-                                    "text-[10px] uppercase tracking-[0.2em]",
-                                    getDriftMood(data.deltas, data.status) === 'negative' && "text-red-300",
-                                    getDriftMood(data.deltas, data.status) === 'positive' && "text-emerald-300",
-                                    getDriftMood(data.deltas, data.status) === 'baseline' && "text-white/40",
-                                    getDriftMood(data.deltas, data.status) === 'stable' && "text-white/60"
+                                    "px-2 py-1 rounded-full border",
+                                    getDriftMood(data.deltas, data.status) === 'negative' && "text-red-300 border-red-500/30",
+                                    getDriftMood(data.deltas, data.status) === 'positive' && "text-emerald-300 border-emerald-500/30",
+                                    getDriftMood(data.deltas, data.status) === 'baseline' && "text-white/40 border-white/10",
+                                    getDriftMood(data.deltas, data.status) === 'stable' && "text-white/60 border-white/20"
                                 )}>
                                     {getDriftMood(data.deltas, data.status) === 'negative' && "Negative drift"}
                                     {getDriftMood(data.deltas, data.status) === 'positive' && "Positive drift"}
                                     {getDriftMood(data.deltas, data.status) === 'baseline' && "Baseline"}
                                     {getDriftMood(data.deltas, data.status) === 'stable' && "Stable"}
                                 </span>
-                            )}
-                        </div>
-                        <div className="space-y-3 text-[12px] text-white/70">
-                            <div className="flex items-center justify-between">
-                                <span>PSI Score</span>
-                                <span>{latest?.psi?.lighthouseScore ?? '—'}</span>
                             </div>
-                            <div className="flex items-center justify-between">
-                                <span>CrUX LCP</span>
-                                <span>{latest?.crux?.lcp || '—'}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span>Delta Count</span>
-                                <span>{data?.deltas?.length ?? 0}</span>
-                            </div>
-                        </div>
+                        )}
                     </div>
-                </section>
-
-                <section className="space-y-6">
-                    <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-[#f06c5b] shadow-[0_0_10px_rgba(240,108,91,0.4)]" />
-                        <span className="text-[12px] font-bold text-white/40 uppercase tracking-[0.25em]">Change Monitor</span>
+                    <div className="glass-card p-6 border-white/[0.08] bg-white/[0.02]">
+                        <div className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">Drift field</div>
+                        <svg viewBox="0 0 520 320" className="w-full h-64">
+                            <defs>
+                                <linearGradient id="driftGlow" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stopColor="#f06c5b" stopOpacity="0.9" />
+                                    <stop offset="100%" stopColor="#7ea6c9" stopOpacity="0.9" />
+                                </linearGradient>
+                            </defs>
+                            <rect x="20" y="20" width="480" height="280" rx="28" fill="rgba(8,12,20,0.9)" stroke="rgba(255,255,255,0.08)" />
+                            <path
+                                d="M60 210 C140 160, 220 240, 300 190 C360 150, 430 180, 460 140"
+                                stroke="url(#driftGlow)"
+                                strokeWidth="2"
+                                fill="none"
+                            >
+                                <animate
+                                    attributeName="d"
+                                    dur="6s"
+                                    repeatCount="indefinite"
+                                    values="
+                                    M60 210 C140 160, 220 240, 300 190 C360 150, 430 180, 460 140;
+                                    M60 200 C140 150, 220 230, 300 180 C360 160, 430 170, 460 150;
+                                    M60 210 C140 160, 220 240, 300 190 C360 150, 430 180, 460 140"
+                                />
+                            </path>
+                            {[
+                                { cx: 120, cy: 120, r: 6, dur: '4s' },
+                                { cx: 220, cy: 160, r: 8, dur: '5s' },
+                                { cx: 320, cy: 110, r: 5, dur: '6s' },
+                                { cx: 400, cy: 180, r: 7, dur: '4.5s' }
+                            ].map((dot, idx) => (
+                                <circle key={idx} cx={dot.cx} cy={dot.cy} r={dot.r} fill="#f06c5b">
+                                    <animate
+                                        attributeName="cy"
+                                        values={`${dot.cy};${dot.cy + 18};${dot.cy}`}
+                                        dur={dot.dur}
+                                        repeatCount="indefinite"
+                                    />
+                                    <animate
+                                        attributeName="opacity"
+                                        values="0.4;1;0.4"
+                                        dur={dot.dur}
+                                        repeatCount="indefinite"
+                                    />
+                                </circle>
+                            ))}
+                            <circle cx="260" cy="160" r="70" fill="none" stroke="rgba(126,166,201,0.35)" strokeWidth="1.5">
+                                <animate
+                                    attributeName="r"
+                                    values="64;74;64"
+                                    dur="7s"
+                                    repeatCount="indefinite"
+                                />
+                            </circle>
+                        </svg>
                     </div>
-                    <h2 className="text-2xl font-semibold text-[#f8fafc]">Run Drift</h2>
-
-                    <form
-                        onSubmit={(event) => {
-                            event.preventDefault();
-                            runDrift();
-                        }}
-                        className="flex flex-col md:flex-row gap-3"
-                    >
-                        <input
-                            type="text"
-                            value={url}
-                            onChange={(e) => {
-                                if (error) setError(null);
-                                setUrl(e.target.value);
-                            }}
-                            placeholder="domain.com"
-                            className="flex-1 px-4 py-3 bg-white/[0.03] border border-white/[0.1] rounded-xl text-white focus:outline-none"
-                            aria-label="Website domain"
-                        />
-                        <button
-                            type="submit"
-                            className="px-6 py-3 bg-[#f06c5b] text-white font-bold text-[12px] tracking-widest uppercase rounded-xl hover:bg-[#ff7d6d] transition-all"
-                        >
-                            Run Drift
-                        </button>
-                    </form>
-                    {error && (
-                        <div className="p-4 border border-red-500/20 bg-red-500/10 rounded-lg flex items-start gap-3">
-                            <AlertTriangle className="w-4 h-4 text-red-400" />
-                            <span className="text-sm text-red-200">{error}</span>
-                        </div>
-                    )}
                 </section>
 
                 {status === 'running' && (
