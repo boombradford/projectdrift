@@ -125,7 +125,7 @@ export default function DriftPage() {
                     <img src="/brand/logo.jpg" alt="Flux Nine Labs" className="w-7 h-7 object-contain" />
                     <span className="text-[14px] font-semibold text-[#f8fafc] tracking-tight">Flux Nine Labs</span>
                 </div>
-                <nav className="hidden md:flex items-center gap-6 text-[12px] text-white/60">
+                <nav className="hidden md:flex items-center gap-7 text-[12px] text-white/60">
                     <a href="#" className="hover:text-white transition-colors">Services</a>
                     <a href="#" className="hover:text-white transition-colors">Work</a>
                     <a href="#" className="hover:text-white transition-colors">Engine</a>
@@ -146,11 +146,12 @@ export default function DriftPage() {
             <main className="max-w-6xl mx-auto px-6 py-12 space-y-12">
                 <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div className="space-y-6">
-                        <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#f8fafc]">
-                            Change detection for real work.
+                        <h1 className="text-4xl md:text-[3.25rem] font-semibold tracking-tight text-[#f8fafc] leading-[1.05]">
+                            AI systems built
+                            <span className="block text-[#7ea6c9]">for real work.</span>
                         </h1>
-                        <p className="text-[15px] text-[#94a3b8] max-w-xl">
-                            Project Drift monitors PSI, CrUX, on-page SEO, and CTA clarity. Every change is evidence-backed, so you can act fast without guessing.
+                        <p className="text-[16px] text-[#9fb2c7] max-w-xl leading-relaxed">
+                            Automations, dashboards, and internal tools built to run day-to-day operations, not sit in a demo folder.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-3">
                             <button
@@ -187,6 +188,20 @@ export default function DriftPage() {
                             </div>
                         </div>
                     </div>
+                </section>
+
+                <section className="grid grid-cols-2 md:grid-cols-4 gap-6 text-white/60 border-y border-white/[0.06] py-6">
+                    {[
+                        { value: '24hr', label: 'Response time' },
+                        { value: '72hr', label: 'Audit delivery' },
+                        { value: '100%', label: 'Evidence-backed' },
+                        { value: '2–4wk', label: 'Typical build' }
+                    ].map((item) => (
+                        <div key={item.label} className="text-center space-y-1">
+                            <div className="text-white text-[15px] font-semibold">{item.value}</div>
+                            <div className="text-[10px] uppercase tracking-[0.2em] text-white/40">{item.label}</div>
+                        </div>
+                    ))}
                 </section>
 
                 <section className="space-y-6">
