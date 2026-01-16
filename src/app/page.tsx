@@ -211,56 +211,79 @@ export default function DriftPage() {
                         <svg viewBox="0 0 520 320" className="w-full h-64">
                             <defs>
                                 <linearGradient id="driftGlow" x1="0" y1="0" x2="1" y2="1">
-                                    <stop offset="0%" stopColor="#f06c5b" stopOpacity="0.9" />
-                                    <stop offset="100%" stopColor="#7ea6c9" stopOpacity="0.9" />
+                                    <stop offset="0%" stopColor="#f06c5b" stopOpacity="0.85" />
+                                    <stop offset="100%" stopColor="#7ea6c9" stopOpacity="0.85" />
                                 </linearGradient>
+                                <radialGradient id="driftHalo" cx="50%" cy="40%" r="60%">
+                                    <stop offset="0%" stopColor="#7ea6c9" stopOpacity="0.25" />
+                                    <stop offset="100%" stopColor="#02040a" stopOpacity="0" />
+                                </radialGradient>
+                                <filter id="softBlur" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="18" />
+                                </filter>
                             </defs>
                             <rect x="20" y="20" width="480" height="280" rx="28" fill="rgba(8,12,20,0.9)" stroke="rgba(255,255,255,0.08)" />
-                            <path
-                                d="M60 210 C140 160, 220 240, 300 190 C360 150, 430 180, 460 140"
-                                stroke="url(#driftGlow)"
-                                strokeWidth="2"
-                                fill="none"
-                            >
-                                <animate
-                                    attributeName="d"
-                                    dur="6s"
-                                    repeatCount="indefinite"
-                                    values="
-                                    M60 210 C140 160, 220 240, 300 190 C360 150, 430 180, 460 140;
-                                    M60 200 C140 150, 220 230, 300 180 C360 160, 430 170, 460 150;
-                                    M60 210 C140 160, 220 240, 300 190 C360 150, 430 180, 460 140"
-                                />
-                            </path>
-                            {[
-                                { cx: 120, cy: 120, r: 6, dur: '4s' },
-                                { cx: 220, cy: 160, r: 8, dur: '5s' },
-                                { cx: 320, cy: 110, r: 5, dur: '6s' },
-                                { cx: 400, cy: 180, r: 7, dur: '4.5s' }
-                            ].map((dot, idx) => (
-                                <circle key={idx} cx={dot.cx} cy={dot.cy} r={dot.r} fill="#f06c5b">
+                            <rect x="20" y="20" width="480" height="280" rx="28" fill="url(#driftHalo)" opacity="0.7" />
+                            <g filter="url(#softBlur)" opacity="0.7">
+                                <path
+                                    d="M40 210 C140 120, 220 260, 320 150 C380 90, 450 130, 500 80"
+                                    stroke="url(#driftGlow)"
+                                    strokeWidth="22"
+                                    fill="none"
+                                    strokeLinecap="round"
+                                >
                                     <animate
-                                        attributeName="cy"
-                                        values={`${dot.cy};${dot.cy + 18};${dot.cy}`}
-                                        dur={dot.dur}
+                                        attributeName="d"
+                                        dur="8s"
                                         repeatCount="indefinite"
+                                        values="
+                                        M40 210 C140 120, 220 260, 320 150 C380 90, 450 130, 500 80;
+                                        M40 190 C140 140, 220 240, 320 170 C380 110, 450 150, 500 100;
+                                        M40 210 C140 120, 220 260, 320 150 C380 90, 450 130, 500 80"
                                     />
+                                </path>
+                                <path
+                                    d="M30 250 C120 170, 240 260, 330 200 C410 150, 470 200, 510 140"
+                                    stroke="#7ea6c9"
+                                    strokeWidth="10"
+                                    fill="none"
+                                    strokeLinecap="round"
+                                    opacity="0.5"
+                                >
                                     <animate
-                                        attributeName="opacity"
-                                        values="0.4;1;0.4"
-                                        dur={dot.dur}
+                                        attributeName="d"
+                                        dur="10s"
                                         repeatCount="indefinite"
+                                        values="
+                                        M30 250 C120 170, 240 260, 330 200 C410 150, 470 200, 510 140;
+                                        M30 230 C120 190, 240 240, 330 220 C410 170, 470 220, 510 160;
+                                        M30 250 C120 170, 240 260, 330 200 C410 150, 470 200, 510 140"
                                     />
-                                </circle>
-                            ))}
-                            <circle cx="260" cy="160" r="70" fill="none" stroke="rgba(126,166,201,0.35)" strokeWidth="1.5">
-                                <animate
-                                    attributeName="r"
-                                    values="64;74;64"
-                                    dur="7s"
-                                    repeatCount="indefinite"
-                                />
-                            </circle>
+                                </path>
+                            </g>
+                            <g opacity="0.7">
+                                {[
+                                    { cx: 110, cy: 120, r: 4, dur: '6s' },
+                                    { cx: 210, cy: 200, r: 6, dur: '7s' },
+                                    { cx: 320, cy: 110, r: 3, dur: '5s' },
+                                    { cx: 410, cy: 190, r: 5, dur: '6.5s' }
+                                ].map((dot, idx) => (
+                                    <circle key={idx} cx={dot.cx} cy={dot.cy} r={dot.r} fill="#f06c5b" opacity="0.6">
+                                        <animate
+                                            attributeName="cy"
+                                            values={`${dot.cy};${dot.cy + 14};${dot.cy}`}
+                                            dur={dot.dur}
+                                            repeatCount="indefinite"
+                                        />
+                                        <animate
+                                            attributeName="opacity"
+                                            values="0.2;0.7;0.2"
+                                            dur={dot.dur}
+                                            repeatCount="indefinite"
+                                        />
+                                    </circle>
+                                ))}
+                            </g>
                         </svg>
                     </div>
                 </section>
