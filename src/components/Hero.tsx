@@ -93,6 +93,16 @@ export function Hero() {
       />
 
       <motion.div
+        className="absolute inset-0 opacity-[0.08] mix-blend-soft-light"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")",
+        }}
+        animate={reduced ? { opacity: 0.06 } : { opacity: [0.04, 0.1, 0.05] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <motion.div
         className="absolute -inset-10 opacity-40"
         style={{ willChange: "transform" }}
         animate={reduced ? { x: 0, y: 0 } : { x: [0, -20, 0], y: [0, 14, 0] }}
