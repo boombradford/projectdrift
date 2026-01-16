@@ -120,26 +120,89 @@ export default function DriftPage() {
 
     return (
         <div className="min-h-screen bg-[#02040a] text-white">
-            <header className="h-14 border-b border-[rgba(255,255,255,0.06)] bg-[#070a12] px-6 flex items-center justify-between">
-                <div className="flex items-center gap-3.5">
-                    <img src="/brand/logo.jpg" alt="Flux Nine Labs" className="w-6 h-6 object-contain" />
-                    <span className="text-[14px] font-semibold text-[#f8fafc] tracking-tight">Project Drift</span>
+            <header className="h-16 border-b border-[rgba(255,255,255,0.06)] bg-[#070a12] px-6 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <img src="/brand/logo.jpg" alt="Flux Nine Labs" className="w-7 h-7 object-contain" />
+                    <span className="text-[14px] font-semibold text-[#f8fafc] tracking-tight">Flux Nine Labs</span>
                 </div>
-                <div className="text-[10px] font-mono text-white/40 uppercase tracking-[0.2em]">Manual Run</div>
+                <nav className="hidden md:flex items-center gap-6 text-[12px] text-white/60">
+                    <a href="#" className="hover:text-white transition-colors">Services</a>
+                    <a href="#" className="hover:text-white transition-colors">Work</a>
+                    <a href="#" className="hover:text-white transition-colors">Engine</a>
+                    <a href="#" className="hover:text-white transition-colors">Blog</a>
+                    <a href="#" className="hover:text-white transition-colors">Contact</a>
+                </nav>
+                <div className="flex items-center gap-3">
+                    <div className="hidden md:block text-[10px] font-mono text-white/40 uppercase tracking-[0.2em]">Project Drift</div>
+                    <button
+                        type="button"
+                        className="px-4 py-2 bg-[#f06c5b] text-white text-[12px] font-semibold rounded-lg hover:bg-[#ff7d6d] transition-colors"
+                    >
+                        Contact us
+                    </button>
+                </div>
             </header>
 
-            <main className="max-w-6xl mx-auto px-6 py-10 space-y-10">
+            <main className="max-w-6xl mx-auto px-6 py-12 space-y-12">
+                <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div className="space-y-6">
+                        <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#f8fafc]">
+                            Change detection for real work.
+                        </h1>
+                        <p className="text-[15px] text-[#94a3b8] max-w-xl">
+                            Project Drift monitors PSI, CrUX, on-page SEO, and CTA clarity. Every change is evidence-backed, so you can act fast without guessing.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <button
+                                type="button"
+                                className="px-5 py-3 bg-[#f06c5b] text-white text-[12px] font-semibold rounded-lg hover:bg-[#ff7d6d] transition-colors"
+                            >
+                                Book a consult
+                            </button>
+                            <button
+                                type="button"
+                                className="px-5 py-3 border border-white/[0.1] text-white/80 text-[12px] font-semibold rounded-lg hover:border-[#f06c5b]/50 hover:text-white transition-colors"
+                            >
+                                Audit website
+                            </button>
+                        </div>
+                    </div>
+                    <div className="glass-card p-6 border-white/[0.08] bg-white/[0.02]">
+                        <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">
+                            <span className="w-2 h-2 rounded-full bg-[#f06c5b]" />
+                            Drift snapshot
+                        </div>
+                        <div className="space-y-3 text-[12px] text-white/70">
+                            <div className="flex items-center justify-between">
+                                <span>PSI Score</span>
+                                <span>{latest?.psi?.lighthouseScore ?? '—'}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span>CrUX LCP</span>
+                                <span>{latest?.crux?.lcp || '—'}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span>CTA Changes</span>
+                                <span>{data?.deltas?.filter(d => d.label === 'CTA Text').length || 0}</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <section className="space-y-6">
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-[#f06c5b] shadow-[0_0_10px_rgba(240,108,91,0.4)]" />
                         <span className="text-[12px] font-bold text-white/40 uppercase tracking-[0.25em]">Change Monitor</span>
                     </div>
-                    <h1 className="text-4xl font-bold tracking-tight text-[#f8fafc]">Drift Report</h1>
-                    <p className="text-[15px] text-[#94a3b8] max-w-2xl">
-                        Track week-over-week changes across PSI, CrUX, on-page SEO, and CTA clarity. Every callout is grounded in real data.
-                    </p>
+                    <h2 className="text-2xl font-semibold text-[#f8fafc]">Run Drift</h2>
 
-                    <div className="flex flex-col md:flex-row gap-3">
+                    <form
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            runDrift();
+                        }}
+                        className="flex flex-col md:flex-row gap-3"
+                    >
                         <input
                             type="text"
                             value={url}
@@ -152,12 +215,12 @@ export default function DriftPage() {
                             aria-label="Website domain"
                         />
                         <button
-                            onClick={runDrift}
+                            type="submit"
                             className="px-6 py-3 bg-[#f06c5b] text-white font-bold text-[12px] tracking-widest uppercase rounded-xl hover:bg-[#ff7d6d] transition-all"
                         >
                             Run Drift
                         </button>
-                    </div>
+                    </form>
                     {error && (
                         <div className="p-4 border border-red-500/20 bg-red-500/10 rounded-lg flex items-start gap-3">
                             <AlertTriangle className="w-4 h-4 text-red-400" />
