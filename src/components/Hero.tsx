@@ -46,6 +46,36 @@ const DriftLines = ({ reduced }: { reduced: boolean }) => (
   </svg>
 );
 
+const DriftParticles = ({ reduced }: { reduced: boolean }) => {
+  const particles = [
+    { cx: 140, cy: 120, r: 2.5, dur: 12 },
+    { cx: 260, cy: 220, r: 3.5, dur: 16 },
+    { cx: 420, cy: 160, r: 2.8, dur: 14 },
+    { cx: 520, cy: 260, r: 3.2, dur: 18 },
+    { cx: 720, cy: 130, r: 2.4, dur: 15 },
+    { cx: 920, cy: 210, r: 3.6, dur: 17 },
+  ];
+
+  return (
+    <svg viewBox="0 0 1200 500" className="w-full h-full">
+      <g>
+        {particles.map((p, idx) => (
+          <motion.circle
+            key={idx}
+            cx={p.cx}
+            cy={p.cy}
+            r={p.r}
+            fill="#7ea6c9"
+            initial={{ opacity: 0.2 }}
+            animate={reduced ? { opacity: 0.2 } : { opacity: [0.15, 0.5, 0.15], cy: [p.cy, p.cy - 18, p.cy] }}
+            transition={{ duration: p.dur, repeat: Infinity, ease: "easeInOut" }}
+          />
+        ))}
+      </g>
+    </svg>
+  );
+};
+
 export function Hero() {
   const reduced = useReducedMotion();
 
@@ -58,17 +88,26 @@ export function Hero() {
             "radial-gradient(circle at 20% 20%, rgba(126,166,201,0.18), transparent 55%) , radial-gradient(circle at 80% 20%, rgba(240,108,91,0.16), transparent 55%), linear-gradient(180deg, rgba(4,6,12,0.2), rgba(2,4,10,0.9))",
         }}
         initial={{ opacity: 0.6 }}
-        animate={reduced ? { opacity: 0.6 } : { opacity: [0.55, 0.75, 0.55] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        animate={reduced ? { opacity: 0.6 } : { opacity: [0.55, 0.8, 0.55], backgroundPosition: ["0% 0%", "100% 40%", "0% 0%"] }}
+        transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
       />
 
       <motion.div
         className="absolute -inset-10 opacity-40"
         style={{ willChange: "transform" }}
-        animate={reduced ? { x: 0, y: 0 } : { x: [0, -16, 0], y: [0, 10, 0] }}
-        transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
+        animate={reduced ? { x: 0, y: 0 } : { x: [0, -20, 0], y: [0, 14, 0] }}
+        transition={{ duration: 28, repeat: Infinity, ease: "easeInOut" }}
       >
         <DriftLines reduced={reduced} />
+      </motion.div>
+
+      <motion.div
+        className="absolute inset-0 opacity-30"
+        style={{ willChange: "transform" }}
+        animate={reduced ? { x: 0, y: 0 } : { x: [0, 18, 0], y: [0, -10, 0] }}
+        transition={{ duration: 34, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <DriftParticles reduced={reduced} />
       </motion.div>
 
       <div className="relative z-10 px-6 py-12 md:px-10 md:py-14">
