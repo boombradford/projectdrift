@@ -195,6 +195,15 @@ export default function DriftPage() {
                                 </div>
                             </section>
 
+                            {data.status === 'baseline' && (
+                                <section className="glass-card p-5 border border-white/[0.08] bg-white/[0.02]">
+                                    <div className="text-[11px] uppercase tracking-[0.2em] text-white/40 mb-2">Baseline Created</div>
+                                    <div className="text-sm text-white/70">
+                                        This is your first Drift run. Changes and deltas will appear after the next run.
+                                    </div>
+                                </section>
+                            )}
+
                             <section className="space-y-4">
                                 <div className="flex items-center gap-3">
                                     <Activity className="w-4 h-4 text-[#f06c5b]" />
@@ -202,7 +211,11 @@ export default function DriftPage() {
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {data.deltas.length === 0 && (
-                                        <div className="glass-card p-5 text-white/60">No significant deltas detected yet.</div>
+                                        <div className="glass-card p-5 text-white/60">
+                                            {data.status === 'baseline'
+                                                ? 'Baseline captured. Run Drift again to see changes.'
+                                                : 'No significant deltas detected yet.'}
+                                        </div>
                                     )}
                                     {data.deltas.map(delta => (
                                         <div key={delta.id} className="glass-card p-5 space-y-3">
@@ -225,7 +238,11 @@ export default function DriftPage() {
                                 </div>
                                 <div className="space-y-4">
                                     {data.actions.length === 0 && (
-                                        <div className="glass-card p-5 text-white/60">No actions generated yet.</div>
+                                        <div className="glass-card p-5 text-white/60">
+                                            {data.status === 'baseline'
+                                                ? 'Actions will appear after a second run.'
+                                                : 'No actions generated yet.'}
+                                        </div>
                                     )}
                                     {data.actions.map(action => (
                                         <div key={action.id} className="glass-card p-5 space-y-3">
