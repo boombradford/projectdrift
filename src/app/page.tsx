@@ -81,6 +81,16 @@ const getSeverityColor = (severity: Severity) => {
     }
 };
 
+const getDriftMood = (deltas: DriftDelta[], status: DriftResponse['status']) => {
+    if (status === 'baseline') return 'baseline';
+    if (deltas.length === 0) return 'stable';
+    const negativeKeywords = ['Dropped', 'Slower', 'Worse', 'Decreased'];
+    const isNegative = deltas.some(delta =>
+        (delta.note && negativeKeywords.some(word => delta.note?.includes(word)))
+    );
+    return isNegative ? 'negative' : 'positive';
+};
+
 export default function DriftPage() {
     const [url, setUrl] = useState('');
     const [status, setStatus] = useState<'idle' | 'running' | 'complete'>('idle');
@@ -125,15 +135,8 @@ export default function DriftPage() {
                     <img src="/brand/logo.jpg" alt="Flux Nine Labs" className="w-7 h-7 object-contain" />
                     <span className="text-[14px] font-semibold text-[#f8fafc] tracking-tight">Flux Nine Labs</span>
                 </div>
-                <nav className="hidden md:flex items-center gap-7 text-[12px] text-white/60">
-                    <a href="#" className="hover:text-white transition-colors">Services</a>
-                    <a href="#" className="hover:text-white transition-colors">Work</a>
-                    <a href="#" className="hover:text-white transition-colors">Engine</a>
-                    <a href="#" className="hover:text-white transition-colors">Blog</a>
-                    <a href="#" className="hover:text-white transition-colors">Contact</a>
-                </nav>
                 <div className="flex items-center gap-3">
-                    <div className="hidden md:block text-[10px] font-mono text-white/40 uppercase tracking-[0.2em]">Project Drift</div>
+                    <div className="hidden md:block text-[10px] font-mono text-white/40 uppercase tracking-[0.2em]">Drift</div>
                     <button
                         type="button"
                         className="px-4 py-2 bg-[#f06c5b] text-white text-[12px] font-semibold rounded-lg hover:bg-[#ff7d6d] transition-colors"
@@ -144,34 +147,34 @@ export default function DriftPage() {
             </header>
 
             <main className="max-w-6xl mx-auto px-6 py-12 space-y-12">
-                <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <div className="space-y-6">
-                        <h1 className="text-4xl md:text-[3.25rem] font-semibold tracking-tight text-[#f8fafc] leading-[1.05]">
-                            AI systems built
-                            <span className="block text-[#7ea6c9]">for real work.</span>
+                <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                    <div className="space-y-5">
+                        <div className="text-[11px] uppercase tracking-[0.3em] text-white/40">Drift</div>
+                        <h1 className="font-monda text-4xl md:text-[3.25rem] font-semibold tracking-tight text-[#f8fafc] leading-[1.05]">
+                            Drift finds real changes
+                            <span className="block text-[#7ea6c9]">in performance and SEO.</span>
                         </h1>
                         <p className="text-[16px] text-[#9fb2c7] max-w-xl leading-relaxed">
-                            Automations, dashboards, and internal tools built to run day-to-day operations, not sit in a demo folder.
+                            Project Drift compares your latest scan to the previous one and surfaces evidence-backed deltas across PSI, CrUX, on-page SEO, and CTA clarity.
                         </p>
-                        <div className="flex flex-col sm:flex-row gap-3">
-                            <button
-                                type="button"
-                                className="px-5 py-3 bg-[#f06c5b] text-white text-[12px] font-semibold rounded-lg hover:bg-[#ff7d6d] transition-colors"
-                            >
-                                Book a consult
-                            </button>
-                            <button
-                                type="button"
-                                className="px-5 py-3 border border-white/[0.1] text-white/80 text-[12px] font-semibold rounded-lg hover:border-[#f06c5b]/50 hover:text-white transition-colors"
-                            >
-                                Audit website
-                            </button>
-                        </div>
                     </div>
-                    <div className="glass-card p-6 border-white/[0.08] bg-white/[0.02]">
-                        <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">
-                            <span className="w-2 h-2 rounded-full bg-[#f06c5b]" />
-                            Drift snapshot
+                    <div className="glass-card p-6 border-white/[0.08] bg-white/[0.02] space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div className="text-[10px] uppercase tracking-[0.2em] text-white/40">Drift snapshot</div>
+                            {data && (
+                                <span className={clsx(
+                                    "text-[10px] uppercase tracking-[0.2em]",
+                                    getDriftMood(data.deltas, data.status) === 'negative' && "text-red-300",
+                                    getDriftMood(data.deltas, data.status) === 'positive' && "text-emerald-300",
+                                    getDriftMood(data.deltas, data.status) === 'baseline' && "text-white/40",
+                                    getDriftMood(data.deltas, data.status) === 'stable' && "text-white/60"
+                                )}>
+                                    {getDriftMood(data.deltas, data.status) === 'negative' && "Negative drift"}
+                                    {getDriftMood(data.deltas, data.status) === 'positive' && "Positive drift"}
+                                    {getDriftMood(data.deltas, data.status) === 'baseline' && "Baseline"}
+                                    {getDriftMood(data.deltas, data.status) === 'stable' && "Stable"}
+                                </span>
+                            )}
                         </div>
                         <div className="space-y-3 text-[12px] text-white/70">
                             <div className="flex items-center justify-between">
@@ -183,25 +186,11 @@ export default function DriftPage() {
                                 <span>{latest?.crux?.lcp || '—'}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span>CTA Changes</span>
-                                <span>{data?.deltas?.filter(d => d.label === 'CTA Text').length || 0}</span>
+                                <span>Delta Count</span>
+                                <span>{data?.deltas?.length ?? 0}</span>
                             </div>
                         </div>
                     </div>
-                </section>
-
-                <section className="grid grid-cols-2 md:grid-cols-4 gap-6 text-white/60 border-y border-white/[0.06] py-6">
-                    {[
-                        { value: '24hr', label: 'Response time' },
-                        { value: '72hr', label: 'Audit delivery' },
-                        { value: '100%', label: 'Evidence-backed' },
-                        { value: '2–4wk', label: 'Typical build' }
-                    ].map((item) => (
-                        <div key={item.label} className="text-center space-y-1">
-                            <div className="text-white text-[15px] font-semibold">{item.value}</div>
-                            <div className="text-[10px] uppercase tracking-[0.2em] text-white/40">{item.label}</div>
-                        </div>
-                    ))}
                 </section>
 
                 <section className="space-y-6">

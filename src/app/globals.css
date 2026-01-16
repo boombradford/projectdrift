@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Monda:wght@400;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -81,6 +82,10 @@
         font-family: var(--font-geist-mono), monospace;
         font-feature-settings: 'zero', 'ss01';
         letter-spacing: -0.012em;
+    }
+
+    .font-monda {
+        font-family: "Monda", var(--font-geist-sans), sans-serif;
     }
 
     .tech-label {
