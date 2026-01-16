@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import clsx from 'clsx';
 import { Activity, AlertTriangle, Database, Globe, RefreshCw } from 'lucide-react';
+import { Hero } from '../components/Hero';
 
 type Severity = 'High' | 'Medium' | 'Low';
 
@@ -147,145 +148,62 @@ export default function DriftPage() {
             </header>
 
             <main className="max-w-6xl mx-auto px-6 py-12 space-y-12">
-                <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <div className="space-y-6">
-                        <div className="text-[11px] uppercase tracking-[0.3em] text-white/40">DRIFT</div>
-                        <h1 className="font-monda text-4xl md:text-[3.35rem] font-semibold tracking-tight text-[#f8fafc] leading-[1.05]">
-                            Drift is a signal layer
-                            <span className="block text-[#7ea6c9]">for real change.</span>
-                        </h1>
-                        <p className="text-[16px] text-[#9fb2c7] max-w-xl leading-relaxed">
-                            We capture a clean baseline, then track what shifts in performance, SEO, and conversion clarity. Every delta is evidence-backed.
-                        </p>
-                        <form
-                            onSubmit={(event) => {
-                                event.preventDefault();
-                                runDrift();
+                <Hero />
+
+                <section className="space-y-6">
+                    <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-[#f06c5b] shadow-[0_0_10px_rgba(240,108,91,0.4)]" />
+                        <span className="text-[12px] font-bold text-white/40 uppercase tracking-[0.25em]">Run Drift</span>
+                    </div>
+
+                    <form
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            runDrift();
+                        }}
+                        className="flex flex-col md:flex-row gap-3"
+                    >
+                        <input
+                            type="text"
+                            value={url}
+                            onChange={(e) => {
+                                if (error) setError(null);
+                                setUrl(e.target.value);
                             }}
-                            className="flex flex-col md:flex-row gap-3"
+                            placeholder="domain.com"
+                            className="flex-1 px-4 py-3 bg-white/[0.03] border border-white/[0.1] rounded-xl text-white focus:outline-none"
+                            aria-label="Website domain"
+                        />
+                        <button
+                            type="submit"
+                            className="px-6 py-3 bg-[#f06c5b] text-white font-bold text-[12px] tracking-widest uppercase rounded-xl hover:bg-[#ff7d6d] transition-all"
                         >
-                            <input
-                                type="text"
-                                value={url}
-                                onChange={(e) => {
-                                    if (error) setError(null);
-                                    setUrl(e.target.value);
-                                }}
-                                placeholder="domain.com"
-                                className="flex-1 px-4 py-3 bg-white/[0.03] border border-white/[0.1] rounded-xl text-white focus:outline-none"
-                                aria-label="Website domain"
-                            />
-                            <button
-                                type="submit"
-                                className="px-6 py-3 bg-[#f06c5b] text-white font-bold text-[12px] tracking-widest uppercase rounded-xl hover:bg-[#ff7d6d] transition-all"
-                            >
-                                Run Drift
-                            </button>
-                        </form>
-                        {error && (
-                            <div className="p-4 border border-red-500/20 bg-red-500/10 rounded-lg flex items-start gap-3">
-                                <AlertTriangle className="w-4 h-4 text-red-400" />
-                                <span className="text-sm text-red-200">{error}</span>
-                            </div>
-                        )}
-                        {data && (
-                            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.2em] text-white/50">
-                                <span>Drift status</span>
-                                <span className={clsx(
-                                    "px-2 py-1 rounded-full border",
-                                    getDriftMood(data.deltas, data.status) === 'negative' && "text-red-300 border-red-500/30",
-                                    getDriftMood(data.deltas, data.status) === 'positive' && "text-emerald-300 border-emerald-500/30",
-                                    getDriftMood(data.deltas, data.status) === 'baseline' && "text-white/40 border-white/10",
-                                    getDriftMood(data.deltas, data.status) === 'stable' && "text-white/60 border-white/20"
-                                )}>
-                                    {getDriftMood(data.deltas, data.status) === 'negative' && "Negative drift"}
-                                    {getDriftMood(data.deltas, data.status) === 'positive' && "Positive drift"}
-                                    {getDriftMood(data.deltas, data.status) === 'baseline' && "Baseline"}
-                                    {getDriftMood(data.deltas, data.status) === 'stable' && "Stable"}
-                                </span>
-                            </div>
-                        )}
-                    </div>
-                    <div className="glass-card p-6 border-white/[0.08] bg-white/[0.02]">
-                        <div className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">Drift field</div>
-                        <svg viewBox="0 0 520 320" className="w-full h-64">
-                            <defs>
-                                <linearGradient id="driftGlow" x1="0" y1="0" x2="1" y2="1">
-                                    <stop offset="0%" stopColor="#f06c5b" stopOpacity="0.85" />
-                                    <stop offset="100%" stopColor="#7ea6c9" stopOpacity="0.85" />
-                                </linearGradient>
-                                <radialGradient id="driftHalo" cx="50%" cy="40%" r="60%">
-                                    <stop offset="0%" stopColor="#7ea6c9" stopOpacity="0.25" />
-                                    <stop offset="100%" stopColor="#02040a" stopOpacity="0" />
-                                </radialGradient>
-                                <filter id="softBlur" x="-50%" y="-50%" width="200%" height="200%">
-                                    <feGaussianBlur stdDeviation="18" />
-                                </filter>
-                            </defs>
-                            <rect x="20" y="20" width="480" height="280" rx="28" fill="rgba(8,12,20,0.9)" stroke="rgba(255,255,255,0.08)" />
-                            <rect x="20" y="20" width="480" height="280" rx="28" fill="url(#driftHalo)" opacity="0.7" />
-                            <g filter="url(#softBlur)" opacity="0.7">
-                                <path
-                                    d="M40 210 C140 120, 220 260, 320 150 C380 90, 450 130, 500 80"
-                                    stroke="url(#driftGlow)"
-                                    strokeWidth="22"
-                                    fill="none"
-                                    strokeLinecap="round"
-                                >
-                                    <animate
-                                        attributeName="d"
-                                        dur="8s"
-                                        repeatCount="indefinite"
-                                        values="
-                                        M40 210 C140 120, 220 260, 320 150 C380 90, 450 130, 500 80;
-                                        M40 190 C140 140, 220 240, 320 170 C380 110, 450 150, 500 100;
-                                        M40 210 C140 120, 220 260, 320 150 C380 90, 450 130, 500 80"
-                                    />
-                                </path>
-                                <path
-                                    d="M30 250 C120 170, 240 260, 330 200 C410 150, 470 200, 510 140"
-                                    stroke="#7ea6c9"
-                                    strokeWidth="10"
-                                    fill="none"
-                                    strokeLinecap="round"
-                                    opacity="0.5"
-                                >
-                                    <animate
-                                        attributeName="d"
-                                        dur="10s"
-                                        repeatCount="indefinite"
-                                        values="
-                                        M30 250 C120 170, 240 260, 330 200 C410 150, 470 200, 510 140;
-                                        M30 230 C120 190, 240 240, 330 220 C410 170, 470 220, 510 160;
-                                        M30 250 C120 170, 240 260, 330 200 C410 150, 470 200, 510 140"
-                                    />
-                                </path>
-                            </g>
-                            <g opacity="0.7">
-                                {[
-                                    { cx: 110, cy: 120, r: 4, dur: '6s' },
-                                    { cx: 210, cy: 200, r: 6, dur: '7s' },
-                                    { cx: 320, cy: 110, r: 3, dur: '5s' },
-                                    { cx: 410, cy: 190, r: 5, dur: '6.5s' }
-                                ].map((dot, idx) => (
-                                    <circle key={idx} cx={dot.cx} cy={dot.cy} r={dot.r} fill="#f06c5b" opacity="0.6">
-                                        <animate
-                                            attributeName="cy"
-                                            values={`${dot.cy};${dot.cy + 14};${dot.cy}`}
-                                            dur={dot.dur}
-                                            repeatCount="indefinite"
-                                        />
-                                        <animate
-                                            attributeName="opacity"
-                                            values="0.2;0.7;0.2"
-                                            dur={dot.dur}
-                                            repeatCount="indefinite"
-                                        />
-                                    </circle>
-                                ))}
-                            </g>
-                        </svg>
-                    </div>
+                            Run Drift
+                        </button>
+                    </form>
+                    {error && (
+                        <div className="p-4 border border-red-500/20 bg-red-500/10 rounded-lg flex items-start gap-3">
+                            <AlertTriangle className="w-4 h-4 text-red-400" />
+                            <span className="text-sm text-red-200">{error}</span>
+                        </div>
+                    )}
+                    {data && (
+                        <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.2em] text-white/50">
+                            <span>Drift status</span>
+                            <span className={clsx(
+                                "px-2 py-1 rounded-full border",
+                                getDriftMood(data.deltas, data.status) === 'negative' && "text-red-300 border-red-500/30",
+                                getDriftMood(data.deltas, data.status) === 'positive' && "text-emerald-300 border-emerald-500/30",
+                                getDriftMood(data.deltas, data.status) === 'baseline' && "text-white/40 border-white/10",
+                                getDriftMood(data.deltas, data.status) === 'stable' && "text-white/60 border-white/20"
+                            )}>
+                                {getDriftMood(data.deltas, data.status) === 'negative' && "Negative drift"}
+                                {getDriftMood(data.deltas, data.status) === 'positive' && "Positive drift"}
+                                {getDriftMood(data.deltas, data.status) === 'baseline' && "Baseline"}
+                                {getDriftMood(data.deltas, data.status) === 'stable' && "Stable"}
+                            </span>
+                        </div>
+                    )}
                 </section>
 
                 {status === 'running' && (
