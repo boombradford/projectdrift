@@ -21,3 +21,10 @@ Deploy to `drift.fluxninelabs.com`.
 
 ## Notes
 - Storage is in-memory for the MVP. A restart clears history.
+
+## Environment
+Create `.env.local` with:
+```
+SUPABASE_URL=...
+SUPABASE_SERVICE_ROLE_KEY=...
+```

@@ -1,8 +1,15 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import { createClient } from '@supabase/supabase-js';
 import { runLighthouseAudit } from '../../../../lib/lighthouse';
-import { updateDriftRecord, DriftSnapshot } from '../../../../lib/driftStore';
+
+const SUPABASE_URL = process.env.SUPABASE_URL || '';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+const supabase = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
+  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } })
+  : null;
 
 export const maxDuration = 120;
 
@@ -455,6 +462,17 @@ function buildActions(deltas: DriftDelta[]): DriftAction[] {
   }));
 }
 
+interface DriftSnapshot {
+  id?: string;
+  url: string;
+  domain: string;
+  timestamp: string;
+  psi?: Record<string, unknown>;
+  crux?: Record<string, unknown>;
+  onPage?: Record<string, unknown>;
+  diagnostics?: Record<string, unknown>;
+}
+
 export async function POST(req: Request) {
   try {
     const { url } = await req.json();
@@ -469,6 +487,46 @@ export async function POST(req: Request) {
     }
 
     const domain = new URL(normalizedUrl).hostname.replace('www.', '');
+
+    if (!supabase) {
+      return NextResponse.json({ error: 'Supabase is not configured.' }, { status: 500 });
+    }
+
+    const { data: stateData, error: stateError } = await supabase
+      .from('drift_state')
+      .select('latest_snapshot_id')
+      .eq('domain', domain)
+      .maybeSingle();
+
+    if (stateError) {
+      throw new Error(stateError.message);
+    }
+
+    let previousSnapshot: DriftSnapshot | undefined;
+    if (stateData?.latest_snapshot_id) {
+      const { data: prevData, error: prevError } = await supabase
+        .from('drift_snapshots')
+        .select('id, url, domain, timestamp, psi, crux, on_page, diagnostics')
+        .eq('id', stateData.latest_snapshot_id)
+        .maybeSingle();
+
+      if (prevError) {
+        throw new Error(prevError.message);
+      }
+
+      if (prevData) {
+        previousSnapshot = {
+          id: prevData.id,
+          url: prevData.url,
+          domain: prevData.domain,
+          timestamp: prevData.timestamp,
+          psi: prevData.psi || undefined,
+          crux: prevData.crux || undefined,
+          onPage: prevData.on_page || undefined,
+          diagnostics: prevData.diagnostics || undefined
+        };
+      }
+    }
 
     const [psi, crux, onPage, diagnostics] = await Promise.all([
       runLighthouseAudit(normalizedUrl).catch(() => undefined),
@@ -487,17 +545,77 @@ export async function POST(req: Request) {
       diagnostics
     };
 
-    const record = updateDriftRecord(domain, snapshot);
-    const deltas = computeDeltas(record.previous, record.latest);
+    const deltas = computeDeltas(previousSnapshot, snapshot);
     const actions = buildActions(deltas);
+
+    const { data: inserted, error: insertError } = await supabase
+      .from('drift_snapshots')
+      .insert({
+        url: snapshot.url,
+        domain: snapshot.domain,
+        timestamp: snapshot.timestamp,
+        psi: snapshot.psi,
+        crux: snapshot.crux,
+        on_page: snapshot.onPage,
+        diagnostics: snapshot.diagnostics
+      })
+      .select('id')
+      .single();
+
+    if (insertError || !inserted?.id) {
+      throw new Error(insertError?.message || 'Failed to persist snapshot.');
+    }
+
+    const { error: stateUpsertError } = await supabase
+      .from('drift_state')
+      .upsert({
+        domain,
+        latest_snapshot_id: inserted.id,
+        previous_snapshot_id: stateData?.latest_snapshot_id || null,
+        updated_at: new Date().toISOString()
+      });
+
+    if (stateUpsertError) {
+      throw new Error(stateUpsertError.message);
+    }
+
+    if (deltas.length) {
+      const { error: deltaError } = await supabase
+        .from('drift_deltas')
+        .insert(deltas.map(delta => ({
+          snapshot_id: inserted.id,
+          label: delta.label,
+          severity: delta.severity,
+          before_value: delta.before,
+          after_value: delta.after,
+          note: delta.note || null
+        })));
+      if (deltaError) {
+        throw new Error(deltaError.message);
+      }
+    }
+
+    if (actions.length) {
+      const { error: actionError } = await supabase
+        .from('drift_actions')
+        .insert(actions.map(action => ({
+          snapshot_id: inserted.id,
+          title: action.title,
+          severity: action.severity,
+          evidence: action.evidence
+        })));
+      if (actionError) {
+        throw new Error(actionError.message);
+      }
+    }
 
     return NextResponse.json({
       domain,
-      latest: record.latest,
-      previous: record.previous,
+      latest: { ...snapshot, id: inserted.id },
+      previous: previousSnapshot,
       deltas,
       actions,
-      status: record.previous ? 'ok' : 'baseline'
+      status: previousSnapshot ? 'ok' : 'baseline'
     });
   } catch (error) {
     const err = error instanceof Error ? error : new Error(String(error));
