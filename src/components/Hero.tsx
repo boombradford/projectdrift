@@ -88,6 +88,51 @@ const DriftParticles = ({ reduced }: { reduced: boolean }) => {
   );
 };
 
+const DriftOrbs = ({ reduced }: { reduced: boolean }) => {
+  const orbs = [
+    { size: 260, left: "6%", top: "65%", color: "rgba(126,166,201,0.18)", dur: 26 },
+    { size: 220, left: "62%", top: "18%", color: "rgba(240,108,91,0.18)", dur: 22 },
+    { size: 180, left: "78%", top: "64%", color: "rgba(126,166,201,0.14)", dur: 24 },
+  ];
+
+  return (
+    <>
+      {orbs.map((orb, idx) => (
+        <motion.div
+          key={idx}
+          className="absolute rounded-full blur-3xl"
+          style={{
+            width: orb.size,
+            height: orb.size,
+            left: orb.left,
+            top: orb.top,
+            background: orb.color,
+          }}
+          animate={reduced ? { opacity: 0.4 } : { opacity: [0.2, 0.55, 0.25], x: [0, 28, -18, 0], y: [0, -20, 22, 0], scale: [1, 1.08, 1] }}
+          transition={{ duration: orb.dur, repeat: Infinity, ease: "easeInOut" }}
+        />
+      ))}
+    </>
+  );
+};
+
+const DriftGrid = ({ reduced }: { reduced: boolean }) => (
+  <motion.div
+    className="absolute inset-0 opacity-[0.07]"
+    style={{
+      backgroundImage:
+        "linear-gradient(rgba(148,163,184,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.15) 1px, transparent 1px)",
+      backgroundSize: "90px 90px",
+    }}
+    animate={
+      reduced
+        ? { opacity: 0.05 }
+        : { opacity: [0.03, 0.1, 0.04], backgroundPosition: ["0px 0px", "120px 90px", "0px 0px"] }
+    }
+    transition={{ duration: 36, repeat: Infinity, ease: "easeInOut" }}
+  />
+);
+
 export function Hero() {
   const reduced = useReducedMotion();
 
@@ -100,8 +145,8 @@ export function Hero() {
             "radial-gradient(circle at 20% 20%, rgba(126,166,201,0.18), transparent 55%) , radial-gradient(circle at 80% 20%, rgba(240,108,91,0.16), transparent 55%), linear-gradient(180deg, rgba(4,6,12,0.2), rgba(2,4,10,0.9))",
         }}
         initial={{ opacity: 0.6 }}
-        animate={reduced ? { opacity: 0.6 } : { opacity: [0.55, 0.85, 0.55], backgroundPosition: ["0% 0%", "100% 40%", "0% 0%"] }}
-        transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
+        animate={reduced ? { opacity: 0.6 } : { opacity: [0.45, 0.9, 0.55], backgroundPosition: ["0% 0%", "100% 60%", "0% 0%"] }}
+        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
       />
 
       <motion.div
@@ -110,9 +155,23 @@ export function Hero() {
           background:
             "radial-gradient(circle at 60% 70%, rgba(240,108,91,0.12), transparent 55%) , radial-gradient(circle at 30% 80%, rgba(126,166,201,0.14), transparent 60%)",
         }}
-        animate={reduced ? { opacity: 0.25 } : { opacity: [0.2, 0.45, 0.2], scale: [1, 1.05, 1] }}
-        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+        animate={reduced ? { opacity: 0.25 } : { opacity: [0.16, 0.55, 0.2], scale: [1, 1.12, 1] }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
       />
+
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 70% 30%, rgba(126,166,201,0.16), transparent 45%) , radial-gradient(circle at 15% 65%, rgba(240,108,91,0.12), transparent 50%)",
+        }}
+        animate={reduced ? { opacity: 0.2 } : { opacity: [0.1, 0.4, 0.12], scale: [1, 1.08, 1], rotate: [0, 4, 0] }}
+        transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <DriftOrbs reduced={reduced} />
+
+      <DriftGrid reduced={reduced} />
 
       <motion.div
         className="absolute inset-0 opacity-[0.08] mix-blend-soft-light"
@@ -120,15 +179,15 @@ export function Hero() {
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")",
         }}
-        animate={reduced ? { opacity: 0.06 } : { opacity: [0.04, 0.1, 0.05] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        animate={reduced ? { opacity: 0.06 } : { opacity: [0.05, 0.14, 0.06], backgroundPosition: ["0% 0%", "100% 120%", "0% 0%"] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
       />
 
       <motion.div
         className="absolute -inset-10 opacity-45"
         style={{ willChange: "transform" }}
-        animate={reduced ? { x: 0, y: 0 } : { x: [0, -24, 0], y: [0, 18, 0] }}
-        transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
+        animate={reduced ? { x: 0, y: 0 } : { x: [0, -38, 0], y: [0, 28, 0] }}
+        transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
       >
         <DriftLines reduced={reduced} />
       </motion.div>
@@ -136,18 +195,37 @@ export function Hero() {
       <motion.div
         className="absolute inset-0 opacity-35"
         style={{ willChange: "transform" }}
-        animate={reduced ? { x: 0, y: 0 } : { x: [0, 22, 0], y: [0, -14, 0] }}
-        transition={{ duration: 36, repeat: Infinity, ease: "easeInOut" }}
+        animate={reduced ? { x: 0, y: 0 } : { x: [0, 34, 0], y: [0, -26, 0] }}
+        transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
       >
         <DriftParticles reduced={reduced} />
+      </motion.div>
+
+      <motion.div
+        className="absolute inset-0 opacity-25"
+        style={{ willChange: "transform" }}
+        animate={reduced ? { x: 0 } : { x: ["-14%", "12%", "-14%"] }}
+        transition={{ duration: 34, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <svg viewBox="0 0 1200 500" className="w-full h-full">
+          <defs>
+            <linearGradient id="driftSweep" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+              <stop offset="45%" stopColor="rgba(126,166,201,0.18)" />
+              <stop offset="55%" stopColor="rgba(240,108,91,0.16)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+            </linearGradient>
+          </defs>
+          <rect x="0" y="70" width="1200" height="160" fill="url(#driftSweep)" />
+        </svg>
       </motion.div>
 
       <motion.svg
         viewBox="0 0 1200 500"
         className="absolute inset-0 opacity-40"
         initial={{ opacity: 0.2 }}
-        animate={reduced ? { opacity: 0.2 } : { opacity: [0.15, 0.45, 0.2] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        animate={reduced ? { opacity: 0.2 } : { opacity: [0.15, 0.5, 0.2] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
       >
         <defs>
           <linearGradient id="driftPulse" x1="0" y1="0" x2="1" y2="1">
@@ -161,8 +239,8 @@ export function Hero() {
           strokeWidth="3"
           fill="none"
           strokeDasharray="12 18"
-          animate={reduced ? { strokeDashoffset: 0 } : { strokeDashoffset: [0, -120, 0] }}
-          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+          animate={reduced ? { strokeDashoffset: 0 } : { strokeDashoffset: [0, -160, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.circle
           cx="860"
@@ -172,14 +250,14 @@ export function Hero() {
           stroke="rgba(240,108,91,0.5)"
           strokeWidth="1.5"
           animate={reduced ? { r: 36 } : { r: [34, 44, 34] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
         />
       </motion.svg>
 
       <motion.div
         className="relative z-10 px-6 py-12 md:px-10 md:py-14"
-        animate={reduced ? { y: 0 } : { y: [0, -6, 0] }}
-        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+        animate={reduced ? { y: 0 } : { y: [0, -8, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
       >
         <div className="text-[11px] uppercase tracking-[0.4em] text-white/40">Drift</div>
         <h1 className="mt-4 font-monda text-4xl md:text-[3.4rem] font-semibold tracking-tight text-[#f8fafc] leading-[1.05]">
