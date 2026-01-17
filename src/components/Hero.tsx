@@ -59,6 +59,38 @@ export function Hero() {
       })
     );
 
+    const packets = Array.from(svg.querySelectorAll<SVGCircleElement>(".drift-packet"));
+    packets.forEach((packet, index) => {
+      const pathId = packet.getAttribute("data-path");
+      const pathEl = pathId ? svg.querySelector<SVGPathElement>(`#${pathId}`) : null;
+      if (!pathEl) {
+        return;
+      }
+
+      const path = anime.path(pathEl);
+      animations.push(
+        anime({
+          targets: packet,
+          translateX: path("x"),
+          translateY: path("y"),
+          duration: 5200 + (index % 4) * 900,
+          delay: index * 260,
+          easing: "linear",
+          loop: true,
+        })
+      );
+      animations.push(
+        anime({
+          targets: packet,
+          opacity: [0.1, 0.95, 0.18],
+          duration: 1800,
+          delay: 600 + index * 220,
+          easing: "easeInOutSine",
+          loop: true,
+        })
+      );
+    });
+
     animations.push(
       anime({
         targets: svg.querySelectorAll(".drift-node"),
@@ -150,18 +182,21 @@ export function Hero() {
           <g fill="none" strokeLinecap="round" strokeLinejoin="round">
             <path
               className="drift-path"
+              id="drift-route-main"
               d="M80 420 C240 340, 360 380, 520 300 C700 210, 860 250, 1060 160"
               stroke="url(#driftLine)"
               strokeWidth="2.2"
             />
             <path
               className="drift-path"
+              id="drift-route-upper"
               d="M140 140 C320 220, 480 120, 640 200 C820 290, 980 220, 1120 260"
               stroke="url(#driftLine)"
               strokeWidth="2"
             />
             <path
               className="drift-path"
+              id="drift-route-latent"
               d="M60 280 C260 180, 420 260, 600 160 C780 80, 980 140, 1140 80"
               stroke="#7ea6c9"
               strokeWidth="1.6"
@@ -169,6 +204,7 @@ export function Hero() {
             />
             <path
               className="drift-path"
+              id="drift-route-branch"
               d="M120 360 C300 260, 460 340, 660 250 C820 180, 980 320, 1140 220"
               stroke="#f06c5b"
               strokeWidth="1.4"
@@ -199,6 +235,21 @@ export function Hero() {
               strokeDasharray="5 18"
               opacity="0.4"
             />
+          </g>
+
+          <g>
+            <circle className="drift-packet" data-path="drift-route-main" cx="0" cy="0" r="3.2" fill="#f8fafc" opacity="0.55" />
+            <circle className="drift-packet" data-path="drift-route-main" cx="0" cy="0" r="2.6" fill="#7ea6c9" opacity="0.4" />
+            <circle className="drift-packet" data-path="drift-route-main" cx="0" cy="0" r="2.1" fill="#f06c5b" opacity="0.35" />
+            <circle className="drift-packet" data-path="drift-route-main" cx="0" cy="0" r="1.8" fill="#f8fafc" opacity="0.3" />
+            <circle className="drift-packet" data-path="drift-route-upper" cx="0" cy="0" r="3" fill="#f8fafc" opacity="0.45" />
+            <circle className="drift-packet" data-path="drift-route-upper" cx="0" cy="0" r="2.4" fill="#f06c5b" opacity="0.38" />
+            <circle className="drift-packet" data-path="drift-route-upper" cx="0" cy="0" r="2" fill="#7ea6c9" opacity="0.32" />
+            <circle className="drift-packet" data-path="drift-route-latent" cx="0" cy="0" r="2.6" fill="#7ea6c9" opacity="0.32" />
+            <circle className="drift-packet" data-path="drift-route-latent" cx="0" cy="0" r="2.1" fill="#f8fafc" opacity="0.3" />
+            <circle className="drift-packet" data-path="drift-route-branch" cx="0" cy="0" r="2.5" fill="#f8fafc" opacity="0.38" />
+            <circle className="drift-packet" data-path="drift-route-branch" cx="0" cy="0" r="2.1" fill="#f06c5b" opacity="0.36" />
+            <circle className="drift-packet" data-path="drift-route-branch" cx="0" cy="0" r="1.8" fill="#7ea6c9" opacity="0.28" />
           </g>
 
           <g className="drift-panels" fill="none" stroke="rgba(126,166,201,0.35)">
