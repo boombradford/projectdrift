@@ -91,6 +91,46 @@ export function Hero() {
       );
     });
 
+    const scanPath = svg.querySelector<SVGPathElement>("#drift-route-main");
+    const scanHead = svg.querySelector<SVGCircleElement>(".drift-scan");
+    const scanGlow = svg.querySelector<SVGCircleElement>(".drift-scan-glow");
+    if (scanPath && scanHead && scanGlow) {
+      const path = anime.path(scanPath);
+      const scanDuration = 6800;
+      animations.push(
+        anime({
+          targets: [scanHead, scanGlow],
+          translateX: path("x"),
+          translateY: path("y"),
+          duration: scanDuration,
+          easing: "easeInOutSine",
+          loop: true,
+        })
+      );
+      animations.push(
+        anime({
+          targets: scanGlow,
+          r: [10, 26, 10],
+          opacity: [0.15, 0.55, 0.15],
+          duration: 1800,
+          easing: "easeInOutSine",
+          loop: true,
+        })
+      );
+      animations.push(
+        anime({
+          targets: svg.querySelectorAll(".drift-node"),
+          scale: [1, 1.7, 1],
+          opacity: [0.35, 0.9, 0.45],
+          duration: 1200,
+          delay: anime.stagger(260, { start: 300 }),
+          easing: "easeInOutSine",
+          loop: true,
+          endDelay: scanDuration - 1200,
+        })
+      );
+    }
+
     animations.push(
       anime({
         targets: svg.querySelectorAll(".drift-node"),
@@ -269,6 +309,11 @@ export function Hero() {
             <circle className="drift-node" cx="1060" cy="160" r="6" />
             <circle className="drift-node" cx="260" cy="360" r="4.5" />
             <circle className="drift-node" cx="820" cy="140" r="4.5" />
+          </g>
+
+          <g>
+            <circle className="drift-scan-glow" cx="0" cy="0" r="12" fill="rgba(240,108,91,0.35)" opacity="0.2" />
+            <circle className="drift-scan" cx="0" cy="0" r="4.2" fill="#f8fafc" opacity="0.9" />
           </g>
 
           <g fill="none" stroke="rgba(248,250,252,0.5)" strokeWidth="1.2">
